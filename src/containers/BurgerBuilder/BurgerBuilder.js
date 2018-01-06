@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { addIngredient, removeIngredient } from '../../store/actions/index'
+import { addIngredient, removeIngredient, initIngredients, fetchIngredientsFailed } from '../../store/actions/index'
 import Aux from '../../HOC/Aux/Aux'
 import Burger from '../../components/Burger/Burger'
 import BuildControls from '../../components/Burger/BuildControls/BuildControls'
@@ -12,19 +12,11 @@ import axios from '../../axios-orders'
 
 class BurgerBuilder extends Component {
   state = {
-    purchasing: false,
-    loading: false,
-    error: false
+    purchasing: false
   }
 
   componentDidMount() {
-    // axios.get('/ingredients.json')
-    //   .then(response => {
-    //     this.setState({ ingredients: response.data })
-    //   })
-    //   .catch(err => {
-    //     this.setState({ error: true })
-    //   })
+    this.props.onInitIngredients()
   }
 
   updatePurchaseState = ingredients => {
@@ -57,7 +49,7 @@ class BurgerBuilder extends Component {
     }
 
     let orderSummary = null
-    let burger = this.state.error ? <p>Ingredients can't be loaded!</p> : <Spinner />
+    let burger = this.props.error ? <p>Ingredients can't be loaded!</p> : <Spinner />
     if (this.props.ingredients) {
       burger = (
         <Aux>
@@ -78,9 +70,6 @@ class BurgerBuilder extends Component {
         purchaseContinued={this.purchaseContinueHandler}
         price={this.props.totalPrice} />
     }
-    if (this.state.loading) {
-      orderSummary = <Spinner />
-    }
     return (
       <Aux>
         <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler}>
@@ -95,14 +84,17 @@ class BurgerBuilder extends Component {
 const mapStateToProps = state => {
   return {
     ingredients: state.ingredients,
-    totalPrice: state.totalPrice
+    totalPrice: state.totalPrice,
+    error: state.error
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     onIngredientAdded: ingredientName => dispatch(addIngredient(ingredientName)),
-    onIngredientRemoved: ingredientName => dispatch(removeIngredient(ingredientName))
+    onIngredientRemoved: ingredientName => dispatch(removeIngredient(ingredientName)),
+    onInitIngredients: () => dispatch(initIngredients()),
+    onFetchIngredientsFailed: () => dispatch(fetchIngredientsFailed())
   }
 }
 
