@@ -1,4 +1,4 @@
-import { PURCHASE_BURGER_SUCCESS, PURCHASE_BURGER_FAILED, PURCHASE_BURGER_START } from './actionTypes'
+import { PURCHASE_BURGER_SUCCESS, PURCHASE_BURGER_FAILED, PURCHASE_BURGER_START, PURCHASE_INIT } from './actionTypes'
 import axios from '../../axios-orders'
 
 export const purchaseBurgerSuccess = (id, orderData) => {
@@ -26,10 +26,15 @@ export const purchaseBurger = orderData => dispatch => {
   dispatch(purchaseBurgerStart())
   axios.post('/orders.json', orderData)
     .then(response => {
-      console.log(response.data)
       dispatch(purchaseBurgerSuccess(response.data.name, orderData))
     })
     .catch(err => {
       dispatch(purchaseBurgerFail(err))
     })
+}
+
+export const purchaseInit = () => {
+  return {
+    type: PURCHASE_INIT
+  }
 }
