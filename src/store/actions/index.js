@@ -8,5 +8,6 @@ export {
 export {
   purchaseBurger,
   purchaseBurgerStart,
-  purchaseBurgerFail
+  purchaseBurgerFail,
+  purchaseInit
 } from './order'
