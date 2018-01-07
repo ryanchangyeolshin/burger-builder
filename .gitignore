@@ -1,6 +1,7 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
 package-lock.json
+keys.js
 
 # dependencies
 /node_modules
