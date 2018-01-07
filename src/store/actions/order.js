@@ -68,6 +68,7 @@ export const fetchOrdersFail = error => {
 }
 
 export const fetchOrders = () => dispatch => {
+  dispatch(fetchOrdersStart())
   axios.get('/orders.json')
     .then(res => {
       const fetchedOrders = []
