@@ -13,38 +13,54 @@ const INGREDIENT_PRICES = {
   bacon: 0.7
 }
 
+const addIngredient = (state, action) => {
+  return {
+    ...state,
+    ingredients: {
+      ...state.ingredients,
+      [action.ingredientName]: state.ingredients[action.ingredientName] + 1
+    },
+    totalPrice: state.totalPrice + INGREDIENT_PRICES[action.ingredientName]
+  }
+}
+
+const removeIngredient = (state, action) => {
+  return {
+    ...state,
+    ingredients: {
+      ...state.ingredients,
+      [action.ingredientName]: state.ingredients[action.ingredientName] - 1
+    },
+    totalPrice: state.totalPrice - INGREDIENT_PRICES[action.ingredientName]
+  }
+}
+
+const setIngredients = (state, action) => {
+  return {
+    ...state,
+    ingredients: action.ingredients,
+    totalPrice: 4,
+    error: false
+  }
+}
+
+const fetchIngredientsFailed = (state, action) => {
+  return {
+    ...state,
+    error: true
+  }
+}
+
 const burgerBuilderReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_INGREDIENT:
-      return {
-        ...state,
-        ingredients: {
-          ...state.ingredients,
-          [action.ingredientName]: state.ingredients[action.ingredientName] + 1
-        },
-        totalPrice: state.totalPrice + INGREDIENT_PRICES[action.ingredientName]
-      }
+      return addIngredient(state, action)
     case REMOVE_INGREDIENT:
-      return {
-        ...state,
-        ingredients: {
-          ...state.ingredients,
-          [action.ingredientName]: state.ingredients[action.ingredientName] - 1
-        },
-        totalPrice: state.totalPrice - INGREDIENT_PRICES[action.ingredientName]
-      }
+      return removeIngredient(state, action)
     case SET_INGREDIENTS:
-      return {
-        ...state,
-        ingredients: action.ingredients,
-        totalPrice: 4,
-        error: false
-      }
+      return setIngredients(state, action)
     case FETCH_INGREDIENTS_FAILED:
-      return {
-        ...state,
-        error: true
-      }
+      return fetchIngredientsFailed(state, action)
     default:
       return state
   }
