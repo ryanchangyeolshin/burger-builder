@@ -1,10 +1,17 @@
-import { AUTH_START, AUTH_SUCCESS, AUTH_FAILED, AUTH_LOGOUT } from '../actions/actionTypes'
+import {
+  AUTH_START,
+  AUTH_SUCCESS,
+  AUTH_FAILED,
+  AUTH_LOGOUT,
+  SET_AUTH_REDIRECT_PATH
+} from '../actions/actionTypes'
 
 const initialState = {
   token: null,
   userId: null,
   error: null,
-  loading: false
+  loading: false,
+  authRedirectPath: '/'
 }
 
 const authStart = (state, action) => {
@@ -41,6 +48,13 @@ const authLogout = (state, action) => {
   }
 }
 
+const setAuthRedirectPath = (state, action) => {
+  return {
+    ...state,
+    authRedirectPath: action.path
+  }
+}
+
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case AUTH_START:
@@ -51,6 +65,8 @@ const authReducer = (state = initialState, action) => {
       return authFailed(state, action)
     case AUTH_LOGOUT:
       return authLogout(state, action)
+    case SET_AUTH_REDIRECT_PATH:
+      return setAuthRedirectPath(state, action)
     default:
       return state
   }
