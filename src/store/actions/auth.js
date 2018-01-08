@@ -1,4 +1,4 @@
-import { AUTH_START, AUTH_SUCCESS, AUTH_FAILED } from './actionTypes'
+import { AUTH_START, AUTH_SUCCESS, AUTH_FAILED, AUTH_LOGOUT } from './actionTypes'
 import { apiKey } from '../../keys'
 import axios from 'axios'
 
@@ -8,10 +8,11 @@ export const authStart = () => {
   }
 }
 
-export const authSuccess = authData => {
+export const authSuccess = (token, userId) => {
   return {
     type: AUTH_SUCCESS,
-    authData: authData
+    token: token,
+    userId: userId
   }
 }
 
@@ -20,6 +21,18 @@ export const authFailed = error => {
     type: AUTH_FAILED,
     error: error
   }
+}
+
+export const logout = () => {
+  return {
+    type: AUTH_LOGOUT
+  }
+}
+
+export const checkAuthTimeout = expirationTime => dispatch => {
+  setTimeout(() => {
+    dispatch(logout())
+  }, expirationTime * 1000)
 }
 
 export const auth = (email, password, isSignup) => dispatch => {
@@ -35,11 +48,10 @@ export const auth = (email, password, isSignup) => dispatch => {
   }
   axios.post(url, authData)
     .then(response => {
-      console.log(response.data)
-      dispatch(authSuccess(response.data))
+      dispatch(authSuccess(response.data.idToken, response.data.localId))
+      dispatch(checkAuthTimeout(response.data.expiresIn))
     })
     .catch(error => {
-      console.log(error)
-      dispatch(authFailed(error))
+      dispatch(authFailed(error.response.data.error))
     })
 }
