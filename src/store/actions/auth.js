@@ -1,4 +1,10 @@
-import { AUTH_START, AUTH_SUCCESS, AUTH_FAILED, AUTH_LOGOUT } from './actionTypes'
+import {
+  AUTH_START,
+  AUTH_SUCCESS,
+  AUTH_FAILED,
+  AUTH_LOGOUT,
+  SET_AUTH_REDIRECT_PATH
+} from './actionTypes'
 import { apiKey } from '../../keys'
 import axios from 'axios'
 
@@ -48,10 +54,20 @@ export const auth = (email, password, isSignup) => dispatch => {
   }
   axios.post(url, authData)
     .then(response => {
+      const expirationDate = new Date(new Date().getTime() + response.data.expiresIn * 1000)
+      localStorage.setItem('token', response.data.idToken)
+      localStorage.setItem('expirationDate', expirationDate)
       dispatch(authSuccess(response.data.idToken, response.data.localId))
       dispatch(checkAuthTimeout(response.data.expiresIn))
     })
     .catch(error => {
       dispatch(authFailed(error.response.data.error))
     })
+}
+
+export const setAuthRedirectPath = path => {
+  return {
+    type: SET_AUTH_REDIRECT_PATH,
+    path: path
+  }
 }
