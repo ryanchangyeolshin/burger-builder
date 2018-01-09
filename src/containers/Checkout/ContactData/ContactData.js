@@ -6,6 +6,7 @@ import Button from '../../../components/UI/Button/Button'
 import Spinner from '../../../components/UI/Spinner/Spinner'
 import Input from '../../../components/UI/Input/Input'
 import WithErrorHandler from '../../../HOC/WithErrorHandler/WithErrorHandler'
+import { checkValidity } from '../../../shared/utility'
 import classes from './ContactData.css'
 
 class ContactData extends Component {
@@ -103,25 +104,10 @@ class ContactData extends Component {
     const order = {
       ingredients: this.props.ingredients,
       price: this.props.totalPrice,
-      orderData: formData
+      orderData: formData,
+      userId: this.props.userId
     }
-    this.props.onOrderBurger(order)
-  }
-
-  checkValidity = (value, rules) => {
-    let isValid = true
-    if (rules.required) {
-      isValid = value.trim() !== '' && isValid
-    }
-
-    if (rules.minLength) {
-      isValid = value.length >= rules.minLength && isValid
-    }
-
-    if (rules.maxLength) {
-      isValid = value.length <= rules.maxLength && isValid
-    }
-    return isValid
+    this.props.onOrderBurger(order, this.props.token)
   }
 
   inputChangedHandler = (event, inputIdentifier) => {
@@ -132,7 +118,7 @@ class ContactData extends Component {
       ...updatedOrderForm[inputIdentifier]
     }
     updatedFormElement.value = event.target.value
-    updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation)
+    updatedFormElement.valid = checkValidity(updatedFormElement.value, updatedFormElement.validation)
     updatedFormElement.touched = true
     updatedOrderForm[inputIdentifier] = updatedFormElement
 
@@ -185,13 +171,15 @@ const mapStateToProps = state => {
   return {
     ingredients: state.burgerBuilder.ingredients,
     totalPrice: state.burgerBuilder.totalPrice,
-    loading: state.orders.loading
+    loading: state.orders.loading,
+    token: state.auth.token,
+    userId: state.auth.userId
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    onOrderBurger: orderData => dispatch(purchaseBurger(orderData))
+    onOrderBurger: (orderData, token) => dispatch(purchaseBurger(orderData, token))
   }
 }
 
