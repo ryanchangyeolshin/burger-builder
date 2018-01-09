@@ -43,7 +43,7 @@ class Auth extends Component {
   }
 
   componentDidMount() {
-    if (this.props.building && this.props.authRedirect !== '/') {
+    if (!this.props.building && this.props.authRedirect !== '/') {
       this.props.onSetAuthRedirectPath()
     }
   }
